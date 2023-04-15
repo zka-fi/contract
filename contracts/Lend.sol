@@ -5,19 +5,28 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "../../circuits/contracts/IBaseVerifier.sol";
 
 contract Lend is ERC20, ERC20Burnable {
 
+    ICred2Verifier public cred2Verifier;
     IERC20 public dai;
-    constructor(address _dai) ERC20("ZDAI", "zdai") {
+    constructor(address _dai, address _cred2VerifierAddress) ERC20("ZDAI", "zdai") {
         dai = IERC20(_dai);
+        cred2Verifier = ICred2Verifier(_cred2VerifierAddress);
+    }
+
+    struct ProofData {
+        uint[2] a;
+        uint[2][2] b;
+        uint[2] c;
+        uint[2] input;
     }
 
     uint public annualInterestRate = 3 * 1e16; // 3%
     uint private interestRatePerSecond = annualInterestRate / 31536000;
         
     uint public totalPool;
-    mapping(address => uint) private usersCollateral;
     mapping(address => uint) private usersBorrowedAmount;
     mapping(address => uint) private usersBorrowedTimestamp;
 
@@ -48,10 +57,12 @@ contract Lend is ERC20, ERC20Burnable {
         dai.transferFrom(address(this), msg.sender, daiAmount);
     }
 
-    // @TODO: add Cred
-    function noPermissionBorrow (uint _daiAmount) external {      
+    function noPermissionBorrow (ProofData memory proofData) external {      
+        require(verifyProof(proofData), "Verification Failed");
         require(usersBorrowedAmount[msg.sender] == 0, "You should repay debt first");
+        uint _daiAmount = prootdata.input[1];
         require(_daiAmount <= dai.balanceOf(address(this)));
+
         usersBorrowedAmount[msg.sender] += _daiAmount;
         usersBorrowedTimestamp[msg.sender] = block.timestamp;
         dai.approve(address(this), _daiAmount);
@@ -79,8 +90,13 @@ contract Lend is ERC20, ERC20Burnable {
         return repayAmount;
     }
 
-    function getUsersCollateral () public view returns(uint) {
-        return usersCollateral[msg.sender];
+    function verifyProof(ProofData memory proofData) private view returns (bool) {
+        return cred2Verifier.verifyProof(
+            proofData.a,
+            proofData.b,
+            proofData.c,
+            proofData.input
+        );
     }
 
     function getUserBorrowedAmount () public view returns(uint) {
