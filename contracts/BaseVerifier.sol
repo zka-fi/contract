@@ -1,0 +1,1 @@
+../circuits/contracts/BaseVerifier.sol
