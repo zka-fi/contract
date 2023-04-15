@@ -15,6 +15,7 @@
     "deploy:polygon": "hardhat run --network polygon-mumbai scripts/deploy.ts",
     "deploy:scroll": "hardhat run --network scroll-alpha scripts/deploy.ts",
     "deploy:celo": "hardhat run --network celo-alfajores scripts/deploy.ts",
+    "deploy:taiko": "hardhat run --network taiko-hackathon scripts/deploy.ts",
     "eslint": "eslint -c .eslintrc \"./**/*.ts\"",
     "eslint:fix": "eslint --fix \"./src/*.ts\""
 
