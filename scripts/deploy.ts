@@ -37,7 +37,7 @@ const main = async () => {
   );
   await verifier.deployed();
 
-  const Zkafi = await ethers.getContractFactory('Dai')
+  const Zkafi = await ethers.getContractFactory('Zkafi')
   const zkafi = await Zkafi.connect(singer).deploy(dai.address, verifier.address)
   console.log(`Zkafi deployed to ${zkafi.address}`)
 
