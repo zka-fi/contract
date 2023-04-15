@@ -10,11 +10,19 @@ const main = async () => {
     network = hardhatArguments.network
   }
 
+  let feeData = await ethers.provider.getFeeData()
+
   const Dai = await ethers.getContractFactory("Dai");
   const daiInitialSupply = 1000000;
-  const dai = await Dai.connect(singer).deploy(daiInitialSupply);
-  console.log(`Dai deployed to ${dai.address}`);
+  const dai = await Dai.connect(singer).deploy(daiInitialSupply, { 
+    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
+    maxFeePerGas: feeData.maxFeePerGas,
+    gasLimit: 4000000,
+  });
 
+  fs.mkdirSync(`scripts/address/${network}/`, { recursive: true });
+
+  console.log(`Dai deployed to ${dai.address}`);
   const daiJson = {
     [network as string]:  dai.address
   }
@@ -25,10 +33,16 @@ const main = async () => {
   );
   await dai.deployed();
 
-  const Verifier = await ethers.getContractFactory("Verifier");
-  const verifier = await Verifier.connect(singer).deploy();
-  console.log(`Verifier deployed to ${verifier.address}`);
+  feeData = await ethers.provider.getFeeData()
 
+  const Verifier = await ethers.getContractFactory("Verifier");
+  const verifier = await Verifier.connect(singer).deploy({
+    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
+    maxFeePerGas: feeData.maxFeePerGas,
+    gasLimit: 4000000,
+  });
+
+  console.log(`Verifier deployed to ${dai.address}`);
   const verifierJson = {
     [network as string]:  verifier.address
   }
@@ -39,10 +53,16 @@ const main = async () => {
   );
   await verifier.deployed();
 
-  const Zkafi = await ethers.getContractFactory('Zkafi')
-  const zkafi = await Zkafi.connect(singer).deploy(dai.address, verifier.address)
-  console.log(`Zkafi deployed to ${zkafi.address}`)
+  feeData = await ethers.provider.getFeeData()
 
+  const Zkafi = await ethers.getContractFactory('Zkafi')
+  const zkafi = await Zkafi.connect(singer).deploy(dai.address, verifier.address, {
+    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
+    maxFeePerGas: feeData.maxFeePerGas,
+    gasLimit: 4000000,
+  })
+
+  console.log(`Zkafi deployed to ${zkafi.address}`)
   const zkafiJson = {
     [network as string]:  zkafi.address
   }

@@ -43,7 +43,7 @@ function getChainConfig (chain: keyof typeof chainIds): NetworkUserConfig {
       jsonRpcUrl = 'https://rpc.testnet.mantle.xyz'
       break
     case 'scroll-alpha':
-      jsonRpcUrl = 'https://alpha-rpc.scroll.io/12'
+      jsonRpcUrl = 'https://alpha-rpc.scroll.io/l2'
       break
     case 'taiko-hackathon':
       jsonRpcUrl= 'https://l2rpc.hackathon.taiko.xyz'
