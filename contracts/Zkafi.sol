@@ -5,9 +5,10 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./IBaseVerifier.sol";
 
-contract Zkafi is ERC20, ERC20Burnable {
+contract Zkafi is ERC20, ERC20Burnable, Ownable {
 
     IBaseVerifier public baseVerifier;
     IERC20 public dai;
@@ -29,6 +30,7 @@ contract Zkafi is ERC20, ERC20Burnable {
     uint public totalPool;
     mapping(address => uint) private usersBorrowedAmount;
     mapping(address => uint) private usersBorrowedTimestamp;
+    mapping(address => bool) private liquidator;
 
     function bond (uint _daiAmount) external {
         uint zdai;
@@ -69,7 +71,6 @@ contract Zkafi is ERC20, ERC20Burnable {
         dai.transferFrom(address(this), msg.sender, _daiAmount);
     }
 
-    // @TODO: add Cred
     function noPermissionRepay (uint _daiAmount) external {
         require(_daiAmount <= dai.balanceOf(msg.sender), "No enough dai");
 
@@ -84,9 +85,9 @@ contract Zkafi is ERC20, ERC20Burnable {
         delete usersBorrowedTimestamp[msg.sender];
     }
 
-    function calculateRepayAmount (address Borrower) public view returns(uint) {
-        uint interest = usersBorrowedAmount[Borrower] * (block.timestamp - usersBorrowedTimestamp[Borrower]) * interestRatePerSecond / 1e18;
-        uint repayAmount = usersBorrowedAmount[Borrower] + interest;
+    function calculateRepayAmount (address borrower) public view returns(uint) {
+        uint interest = usersBorrowedAmount[borrower] * (block.timestamp - usersBorrowedTimestamp[borrower]) * interestRatePerSecond / 1e18;
+        uint repayAmount = usersBorrowedAmount[borrower] + interest;
         return repayAmount;
     }
 
@@ -107,7 +108,26 @@ contract Zkafi is ERC20, ERC20Burnable {
         return usersBorrowedTimestamp[msg.sender];
     }
 
-    function setAnnualInterestRate (uint Rate) public {
+    function setAnnualInterestRate (uint Rate) external onlyOwner {
         annualInterestRate = Rate * 1e16;
+    }
+
+    function setLiquidator(address target, bool isLiquidator) external onlyOwner {
+        liquidator[target] = isLiquidator;
+    }
+
+    function liquidate (uint _daiAmount, address borrower) external {
+        require(_daiAmount <= dai.balanceOf(msg.sender));
+        require(liquidator[msg.sender] == true, "You are not liquidator");
+
+        uint repayAmount = this.calculateRepayAmount(borrower);
+        usersBorrowedAmount[borrower] = repayAmount;
+
+        if (_daiAmount > repayAmount) {
+            _daiAmount = repayAmount;
+        }
+        dai.transferFrom(msg.sender, address(this), _daiAmount);
+        usersBorrowedAmount[msg.sender] -= _daiAmount;
+        delete usersBorrowedTimestamp[borrower];
     }
 }
