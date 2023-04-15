@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "../../circuits/contracts/IBaseVerifier.sol";
 
-contract Lend is ERC20, ERC20Burnable {
+contract Zkafi is ERC20, ERC20Burnable {
 
     ICred2Verifier public cred2Verifier;
     IERC20 public dai;

@@ -22,19 +22,19 @@ const main = async () => {
   );
   await dai.deployed();
 
-  const Lend = await ethers.getContractFactory('Dai')
-  const lend = await Lend.connect(singer).deploy(dai.address)
-  console.log(`Lend.sol deployed to ${lend.address}`)
+  const Zkafi = await ethers.getContractFactory('Dai')
+  const zkafi = await Zkafi.connect(singer).deploy(dai.address)
+  console.log(`Lend.sol deployed to ${zkafi.address}`)
 
-  const lendJson = {
-    [network as string]:  lend.address
+  const zkafiJson = {
+    [network as string]:  zkafi.address
   }
   fs.writeFileSync(
-    "scripts/address/Lend.json",
-    JSON.stringify(lendJson, null, 2),
+    "scripts/address/Zkafi.json",
+    JSON.stringify(zkafiJson, null, 2),
     "utf8"
   );
-  await lend.deployed();
+  await zkafi.deployed();
 };
 
 main()
