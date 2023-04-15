@@ -3,15 +3,16 @@ import { ethers, hardhatArguments } from "hardhat";
 
 const main = async () => {
   const [singer] = await ethers.getSigners();
-  const Dai = await ethers.getContractFactory("Dai");
-  const daiInitialSupply = 1000000;
-  const dai = await Dai.connect(singer).deploy(daiInitialSupply);
-  console.log(`Dai.sol deployed to ${dai.address}`);
-
   let network;
   if (!hardhatArguments.network) {
     network = 'hardhat'
   }
+
+  const Dai = await ethers.getContractFactory("Dai");
+  const daiInitialSupply = 1000000;
+  const dai = await Dai.connect(singer).deploy(daiInitialSupply);
+  console.log(`Dai deployed to ${dai.address}`);
+
   const daiJson = {
     [network as string]:  dai.address
   }
@@ -22,9 +23,23 @@ const main = async () => {
   );
   await dai.deployed();
 
+  const Verifier = await ethers.getContractFactory("Verifier");
+  const verifier = await Verifier.connect(singer).deploy();
+  console.log(`Verifier deployed to ${verifier.address}`);
+
+  const verifierJson = {
+    [network as string]:  verifier.address
+  }
+  fs.writeFileSync(
+    "scripts/address/Verifier.json",
+    JSON.stringify(verifierJson, null, 2),
+    "utf8"
+  );
+  await verifier.deployed();
+
   const Zkafi = await ethers.getContractFactory('Dai')
-  const zkafi = await Zkafi.connect(singer).deploy(dai.address)
-  console.log(`Lend.sol deployed to ${zkafi.address}`)
+  const zkafi = await Zkafi.connect(singer).deploy(dai.address, verifier.address)
+  console.log(`Zkafi deployed to ${zkafi.address}`)
 
   const zkafiJson = {
     [network as string]:  zkafi.address
