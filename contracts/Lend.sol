@@ -12,8 +12,14 @@ contract Lend is ERC20, ERC20Burnable {
     constructor(address _dai) ERC20("ZDAI", "zdai") {
         dai = IERC20(_dai);
     }
+
+    uint public annualInterestRate = 3 * 1e16; // 3%
+    uint private interestRatePerSecond = annualInterestRate / 31536000;
         
     uint public totalPool;
+    mapping(address => uint) private usersCollateral;
+    mapping(address => uint) private usersBorrowedAmount;
+    mapping(address => uint) private usersBorrowedTimestamp;
 
     function bond (uint _daiAmount) external {
         uint zdai;
@@ -40,5 +46,52 @@ contract Lend is ERC20, ERC20Burnable {
         burn(_zdaiAmount);
         dai.approve(address(this), daiAmount);
         dai.transferFrom(address(this), msg.sender, daiAmount);
+    }
+
+    // @TODO: add Cred
+    function noPermissionBorrow (uint _daiAmount) external {      
+        require(usersBorrowedAmount[msg.sender] == 0, "You should repay debt first");
+        require(_daiAmount <= dai.balanceOf(address(this)));
+        usersBorrowedAmount[msg.sender] += _daiAmount;
+        usersBorrowedTimestamp[msg.sender] = block.timestamp;
+        dai.approve(address(this), _daiAmount);
+        dai.transferFrom(address(this), msg.sender, _daiAmount);
+    }
+
+    // @TODO: add Cred
+    function noPermissionRepay (uint _daiAmount) external {
+        require(_daiAmount <= dai.balanceOf(msg.sender), "No enough dai");
+
+        uint repayAmount = this.calculateRepayAmount(msg.sender);
+        usersBorrowedAmount[msg.sender] = repayAmount;
+
+        if (_daiAmount > repayAmount) {
+            _daiAmount = repayAmount;
+        }
+        dai.transferFrom(msg.sender, address(this), _daiAmount);
+        usersBorrowedAmount[msg.sender] -= _daiAmount;
+        delete usersBorrowedTimestamp[msg.sender];
+    }
+
+    function calculateRepayAmount (address Borrower) public view returns(uint) {
+        uint interest = usersBorrowedAmount[Borrower] * (block.timestamp - usersBorrowedTimestamp[Borrower]) * interestRatePerSecond / 1e18;
+        uint repayAmount = usersBorrowedAmount[Borrower] + interest;
+        return repayAmount;
+    }
+
+    function getUsersCollateral () public view returns(uint) {
+        return usersCollateral[msg.sender];
+    }
+
+    function getUserBorrowedAmount () public view returns(uint) {
+        return usersBorrowedAmount[msg.sender];
+    }
+
+    function getUserBorrowedTimestamp () public view returns(uint) {
+        return usersBorrowedTimestamp[msg.sender];
+    }
+
+    function setAnnualInterestRate (uint Rate) public {
+        annualInterestRate = Rate * 1e16;
     }
 }

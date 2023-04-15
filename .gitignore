@@ -6,4 +6,4 @@ cache
 artifacts
 typechain
 typechain/*
-scripts/address/*.txt
+scripts/address/*.json
