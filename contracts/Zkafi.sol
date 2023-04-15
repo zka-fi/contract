@@ -9,11 +9,11 @@ import "./IBaseVerifier.sol";
 
 contract Zkafi is ERC20, ERC20Burnable {
 
-    ICred2Verifier public cred2Verifier;
+    IBaseVerifier public baseVerifier;
     IERC20 public dai;
-    constructor(address _dai, address _cred2VerifierAddress) ERC20("ZDAI", "zdai") {
+    constructor(address _dai, address _baseVerifierAddress) ERC20("ZDAI", "zdai") {
         dai = IERC20(_dai);
-        cred2Verifier = ICred2Verifier(_cred2VerifierAddress);
+        baseVerifier = IBaseVerifier(_baseVerifierAddress);
     }
 
     struct ProofData {
@@ -60,7 +60,7 @@ contract Zkafi is ERC20, ERC20Burnable {
     function noPermissionBorrow (ProofData memory proofData) external {      
         require(verifyProof(proofData), "Verification Failed");
         require(usersBorrowedAmount[msg.sender] == 0, "You should repay debt first");
-        uint _daiAmount = prootdata.input[1];
+        uint _daiAmount = proofData.input[1];
         require(_daiAmount <= dai.balanceOf(address(this)));
 
         usersBorrowedAmount[msg.sender] += _daiAmount;
@@ -91,7 +91,7 @@ contract Zkafi is ERC20, ERC20Burnable {
     }
 
     function verifyProof(ProofData memory proofData) private view returns (bool) {
-        return cred2Verifier.verifyProof(
+        return baseVerifier.verifyProof(
             proofData.a,
             proofData.b,
             proofData.c,
