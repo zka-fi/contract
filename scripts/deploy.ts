@@ -6,6 +6,8 @@ const main = async () => {
   let network;
   if (!hardhatArguments.network) {
     network = 'hardhat'
+  } else {
+    network = hardhatArguments.network
   }
 
   const Dai = await ethers.getContractFactory("Dai");
@@ -17,7 +19,7 @@ const main = async () => {
     [network as string]:  dai.address
   }
   fs.writeFileSync(
-    "scripts/address/Dai.json",
+    `scripts/address/${network}/Dai.json`,
     JSON.stringify(daiJson, null, 2),
     "utf8"
   );
@@ -31,7 +33,7 @@ const main = async () => {
     [network as string]:  verifier.address
   }
   fs.writeFileSync(
-    "scripts/address/Verifier.json",
+    `scripts/address/${network}/Verifier.json`,
     JSON.stringify(verifierJson, null, 2),
     "utf8"
   );
@@ -45,7 +47,7 @@ const main = async () => {
     [network as string]:  zkafi.address
   }
   fs.writeFileSync(
-    "scripts/address/Zkafi.json",
+    `scripts/address/${network}/Zkafi.json`,
     JSON.stringify(zkafiJson, null, 2),
     "utf8"
   );
