@@ -19,6 +19,7 @@ const chainIds = {
   'polygon-mumbai': 80001,
   'scroll-alpha': 534353,
   'celo-alfajores': 44787,
+  'taiko-hackathon': 167002,
 }
 
 // Ensure that we have all the environment variables we need.
@@ -45,7 +46,10 @@ function getChainConfig (chain: keyof typeof chainIds): NetworkUserConfig {
       jsonRpcUrl = `http://${process.env.QUORUM_URL}:8545`
       break
     case 'scroll-alpha':
-      jsonRpcUrl = `https://alpha-rpc.scroll.io/12`
+      jsonRpcUrl = 'https://alpha-rpc.scroll.io/12'
+      break
+    case 'taiko-hackathon':
+      jsonRpcUrl= 'https://l2rpc.hackathon.taiko.xyz'
       break
     default:
       jsonRpcUrl = `https://${chain}.infura.io/v3/${infuraApiKey}`
@@ -72,7 +76,8 @@ const config: HardhatUserConfig = {
     'mantle-testnet': getChainConfig('mantle-testnet'),
     'polygon-mumbai': getChainConfig('polygon-mumbai'),
     'scroll-alpha': getChainConfig('scroll-alpha'),
-    'celo-alfajores': getChainConfig('celo-alfajores')
+    'celo-alfajores': getChainConfig('celo-alfajores'),
+    'taiko-hackathon': getChainConfig('taiko-hackathon'),
   },
   paths: {
     artifacts: './artifacts',
@@ -112,6 +117,7 @@ const config: HardhatUserConfig = {
       mantleTestnet: process.env.MANTLESCAN_API_KEY || '',
       scrollAlpha: process.env.SCROLLSCAN_API_KEY || '',
       celoAlfajores: process.env.CELOSCAN_API_KEY || '',
+      taikoAlpha: process.env.TAIKOSCAN_API_KEY || '',
     },
   },
   gasReporter: {
