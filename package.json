@@ -4,7 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "hardhat test",
+    "clean": "rm -rf ./artifacts ./cache ./typechain",
+    "compile": "hardhat compile",
+    "node": "hardhat node",
+    "deploy": "hardhat run scripts/deploy.ts",
+    "deploy:goerli": "hardhat run --network goerli scripts/deploy.ts",
+    "deploy:chiado": "hardhat run --network chiado-testnet scripts/deploy.ts",
+    "deploy:mantle": "hardhat run --network mantle-testnet scripts/deploy.ts",
+    "deploy:polygon": "hardhat run --network polygon-mumbai scripts/deploy.ts",
+    "deploy:scroll": "hardhat run --network scroll-alpha scripts/deploy.ts",
+    "deploy:celo": "hardhat run --network celo-alfajores scripts/deploy.ts",
+    "eslint": "eslint -c .eslintrc \"./**/*.ts\"",
+    "eslint:fix": "eslint --fix \"./src/*.ts\""
+
   },
   "repository": {
     "type": "git",

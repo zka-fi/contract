@@ -18,7 +18,7 @@ const chainIds = {
   'mantle-testnet': 5001,
   'polygon-mumbai': 80001,
   'scroll-alpha': 534353,
-  'celo-baklava': 62320,
+  'celo-alfajores': 44787,
 }
 
 // Ensure that we have all the environment variables we need.
@@ -66,9 +66,13 @@ const config: HardhatUserConfig = {
     local: {
       url: 'http://127.0.0.1:8545',
     },
-    goerli: getChainConfig('goerli'),
     mainnet: getChainConfig('mainnet'),
+    goerli: getChainConfig('goerli'),
+    'chiado-testnet': getChainConfig('chiado-testnet'),
+    'mantle-testnet': getChainConfig('mantle-testnet'),
     'polygon-mumbai': getChainConfig('polygon-mumbai'),
+    'scroll-alpha': getChainConfig('scroll-alpha'),
+    'celo-alfajores': getChainConfig('celo-alfajores')
   },
   paths: {
     artifacts: './artifacts',
@@ -94,9 +98,13 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      goerli: process.env.ETHERSCAN_API_KEY || '',
       mainnet: process.env.ETHERSCAN_API_KEY || '',
+      goerli: process.env.GOERLISCAN_API_KEY || '',
       polygonMumbai: process.env.POLYGONSCAN_API_KEY || '',
+      chiadoTestnet: process.env.CHIADOSCAN_API_KEY || '',
+      mantleTestnet: process.env.MANTLESCAN_API_KEY || '',
+      scrollAlpha: process.env.SCROLLSCAN_API_KEY || '',
+      celoAlfajores: process.env.CELOSCAN_API_KEY || '',
     },
   },
   gasReporter: {
