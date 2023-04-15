@@ -42,9 +42,6 @@ function getChainConfig (chain: keyof typeof chainIds): NetworkUserConfig {
     case 'mantle-testnet':
       jsonRpcUrl = 'https://rpc.testnet.mantle.xyz'
       break
-    case 'polygon-mumbai':
-      jsonRpcUrl = `http://${process.env.QUORUM_URL}:8545`
-      break
     case 'scroll-alpha':
       jsonRpcUrl = 'https://alpha-rpc.scroll.io/12'
       break
