@@ -18,7 +18,6 @@
     "deploy:taiko": "hardhat run --network taiko-hackathon scripts/deploy.ts",
     "eslint": "eslint -c .eslintrc \"./**/*.ts\"",
     "eslint:fix": "eslint --fix \"./src/*.ts\""
-
   },
   "repository": {
     "type": "git",

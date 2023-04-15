@@ -3,7 +3,5 @@ node_modules
 
 # hardhat toolbox
 cache
-artifacts
 typechain
 typechain/*
-scripts/address/**/*.json
