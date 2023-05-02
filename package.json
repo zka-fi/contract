@@ -10,12 +10,12 @@
     "node": "hardhat node",
     "deploy": "hardhat run scripts/deploy.ts",
     "deploy:goerli": "hardhat run --network goerli scripts/deploy.ts",
+    "deploy:sepolia": "hardhat run --network sepolia scripts/deploy.ts",
     "deploy:chiado": "hardhat run --network chiado-testnet scripts/deploy.ts",
     "deploy:mantle": "hardhat run --network mantle-testnet scripts/deploy.ts",
     "deploy:polygon": "hardhat run --network polygon-mumbai scripts/deploy.ts",
     "deploy:scroll": "hardhat run --network scroll-alpha scripts/deploy.ts",
     "deploy:celo": "hardhat run --network celo-alfajores scripts/deploy.ts",
-    "deploy:taiko": "hardhat run --network taiko-hackathon scripts/deploy.ts",
     "eslint": "eslint -c .eslintrc \"./**/*.ts\"",
     "eslint:fix": "eslint --fix \"./src/*.ts\""
   },

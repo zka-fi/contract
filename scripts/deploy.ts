@@ -13,18 +13,19 @@ const main = async () => {
   let feeData = await ethers.provider.getFeeData()
 
   const Dai = await ethers.getContractFactory("Dai");
-  const daiInitialSupply = 1000000;
-  const dai = await Dai.connect(singer).deploy(daiInitialSupply, { 
-    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
-    maxFeePerGas: feeData.maxFeePerGas,
-    gasLimit: 4000000,
-  });
+  const daiInitialSupply = ethers.BigNumber.from('1000000000000000000000000');
+  const dai = await Dai.connect(singer).deploy((daiInitialSupply));
+  console.log(`Dai deployed to ${dai.address}`);
 
   fs.mkdirSync(`scripts/address/${network}/`, { recursive: true });
 
   console.log(`Dai deployed to ${dai.address}`);
   const daiJson = {
-    [network as string]:  dai.address
+    [network as string]: dai.address
+  }
+
+  if (!fs.existsSync(`scripts/address/${network}`)) {
+    fs.mkdirSync(`scripts/address/${network}`);
   }
   fs.writeFileSync(
     `scripts/address/${network}/Dai.json`,

@@ -24,8 +24,7 @@ contract Zkafi is ERC20, ERC20Burnable, Ownable {
         uint[2] input;
     }
 
-    uint public annualInterestRate = 3 * 1e16; // 3%
-    uint private interestRatePerSecond = annualInterestRate / 31536000;
+    uint public annualInterestRate = 300; // 3% in basis points (parts per 10,000)
         
     uint public totalPool;
     mapping(address => uint) private usersBorrowedAmount;
@@ -43,7 +42,6 @@ contract Zkafi is ERC20, ERC20Burnable, Ownable {
         // dai -> CAdai
         dai.transferFrom(msg.sender, address(this), _daiAmount);
         totalPool += zdai;
-        // need to add algo to give bond amount
         _mint(msg.sender, zdai);
     }
 
@@ -51,7 +49,7 @@ contract Zkafi is ERC20, ERC20Burnable, Ownable {
         // CAdai -> dai
         require(_zdaiAmount > 0, "zdai = 0");
         require(_zdaiAmount <= balanceOf(msg.sender), "zdai Not enough");
-        // need to add algo to give bond amount
+
         uint daiAmount = (_zdaiAmount * dai.balanceOf(address(this))) / totalPool;
         totalPool -= _zdaiAmount;
         burn(_zdaiAmount);
@@ -85,9 +83,9 @@ contract Zkafi is ERC20, ERC20Burnable, Ownable {
         delete usersBorrowedTimestamp[msg.sender];
     }
 
-    function calculateRepayAmount (address borrower) public view returns(uint) {
-        uint interest = usersBorrowedAmount[borrower] * (block.timestamp - usersBorrowedTimestamp[borrower]) * interestRatePerSecond / 1e18;
-        uint repayAmount = usersBorrowedAmount[borrower] + interest;
+    function calculateRepayAmount (address Borrower) public view returns(uint) {
+        uint interest = usersBorrowedAmount[Borrower] * (block.timestamp - usersBorrowedTimestamp[Borrower]) * annualInterestRate / 10000 / 31536000;
+        uint repayAmount = usersBorrowedAmount[Borrower] + interest;
         return repayAmount;
     }
 
@@ -109,7 +107,7 @@ contract Zkafi is ERC20, ERC20Burnable, Ownable {
     }
 
     function setAnnualInterestRate (uint Rate) external onlyOwner {
-        annualInterestRate = Rate * 1e16;
+        annualInterestRate = Rate;
     }
 
     function setLiquidator(address target, bool isLiquidator) external onlyOwner {
