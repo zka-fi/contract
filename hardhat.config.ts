@@ -13,13 +13,13 @@ dotenvConfig({ path: resolve(__dirname, './.env') })
 const chainIds = {
   mainnet: 1,
   goerli: 5,
+  sepolia: 11155111,
   hardhat: 31337,
   'chiado-testnet': 10200,
   'mantle-testnet': 5001,
   'polygon-mumbai': 80001,
   'scroll-alpha': 534353,
   'celo-alfajores': 44787,
-  'taiko-hackathon': 167002,
 }
 
 // Ensure that we have all the environment variables we need.
@@ -45,9 +45,6 @@ function getChainConfig (chain: keyof typeof chainIds): NetworkUserConfig {
     case 'scroll-alpha':
       jsonRpcUrl = 'https://alpha-rpc.scroll.io/l2'
       break
-    case 'taiko-hackathon':
-      jsonRpcUrl= 'https://l2rpc.hackathon.taiko.xyz'
-      break
     default:
       jsonRpcUrl = `https://${chain}.infura.io/v3/${infuraApiKey}`
   }
@@ -69,12 +66,12 @@ const config: HardhatUserConfig = {
     },
     mainnet: getChainConfig('mainnet'),
     goerli: getChainConfig('goerli'),
+    sepolia: getChainConfig('sepolia'),
     'chiado-testnet': getChainConfig('chiado-testnet'),
     'mantle-testnet': getChainConfig('mantle-testnet'),
     'polygon-mumbai': getChainConfig('polygon-mumbai'),
     'scroll-alpha': getChainConfig('scroll-alpha'),
     'celo-alfajores': getChainConfig('celo-alfajores'),
-    'taiko-hackathon': getChainConfig('taiko-hackathon'),
   },
   paths: {
     artifacts: './artifacts',
@@ -109,12 +106,12 @@ const config: HardhatUserConfig = {
     apiKey: {
       mainnet: process.env.ETHERSCAN_API_KEY || '',
       goerli: process.env.GOERLISCAN_API_KEY || '',
+      sepolia: process.env.SEPOLIASCAN_API_KEY || '',
       polygonMumbai: process.env.POLYGONSCAN_API_KEY || '',
       chiadoTestnet: process.env.CHIADOSCAN_API_KEY || '',
       mantleTestnet: process.env.MANTLESCAN_API_KEY || '',
       scrollAlpha: process.env.SCROLLSCAN_API_KEY || '',
       celoAlfajores: process.env.CELOSCAN_API_KEY || '',
-      taikoAlpha: process.env.TAIKOSCAN_API_KEY || '',
     },
   },
   gasReporter: {
