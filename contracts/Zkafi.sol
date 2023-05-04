@@ -84,6 +84,9 @@ contract Zkafi is ERC20, ERC20Burnable, Ownable {
     }
 
     function calculateRepayAmount (address Borrower) public view returns(uint) {
+        if(usersBorrowedTimestamp[Borrower] == 0) {
+          return 0;
+        }
         uint interest = usersBorrowedAmount[Borrower] * (block.timestamp - usersBorrowedTimestamp[Borrower]) * annualInterestRate / 10000 / 31536000;
         uint repayAmount = usersBorrowedAmount[Borrower] + interest;
         return repayAmount;
