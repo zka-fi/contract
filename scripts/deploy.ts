@@ -13,9 +13,8 @@ const main = async () => {
   let feeData = await ethers.provider.getFeeData()
 
   const Dai = await ethers.getContractFactory("Dai");
-  const daiInitialSupply = ethers.BigNumber.from('1000000000000000000000000');
+  const daiInitialSupply = ethers.BigNumber.from('10000000000000000000');
   const dai = await Dai.connect(singer).deploy((daiInitialSupply));
-  console.log(`Dai deployed to ${dai.address}`);
 
   fs.mkdirSync(`scripts/address/${network}/`, { recursive: true });
 
@@ -43,7 +42,7 @@ const main = async () => {
     gasLimit: 4000000,
   });
 
-  console.log(`Verifier deployed to ${dai.address}`);
+  console.log(`Verifier deployed to ${verifier.address}`);
   const verifierJson = {
     [network as string]:  verifier.address
   }
